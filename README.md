@@ -121,6 +121,12 @@ const categories: ToolCategory[] = [
 |------|------|------|
 | URL 编码/解码 | URL编码、解码及参数解析 | `/tools/url-codec` |
 | Base64 编码/解码 | Base64编码解码，支持文件和URL Safe | `/tools/base64-codec` |
+| UUID 生成器 | 生成通用唯一识别码 | `/tools/uuid-generator` |
+| JWT 解码 | 解析和验证 JSON Web Token | `/tools/jwt-decoder` |
+| 日期计算 | 计算 N 天以前或以后的日期 | `/tools/date-calculator` |
+| 文本对比 | 对比两段文本的差异 | `/tools/text-diff` |
+| 文件哈希校验 | 计算文件哈希值，校验完整性 | `/tools/file-hash` |
+| 屏保 | 浏览器桌面屏保，支持图片/视频/3D动画 | `/tools/screensaver` |
 
 ## 开发规范
 
@@ -129,3 +135,12 @@ const categories: ToolCategory[] = [
 3. **样式**：使用 Tailwind CSS，避免自定义 CSS
 4. **图标**：使用 [Lucide Icons](https://lucide.dev/icons/)
 5. **类型**：所有组件和函数都需要添加类型定义
+
+## 工具配置
+
+### 屏保工具资源
+
+屏保工具需要以下资源文件：
+
+- **图片轮播**：将图片放入 `public/assets/screensaver/images/` 目录，命名为 `1.jpg`, `2.jpg`... 即可自动轮播
+- **视频循环**：将视频文件放入 `public/assets/screensaver/video/loop.mp4` 即可播放
