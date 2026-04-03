@@ -15,14 +15,27 @@ import {
 // 屏保类型
 type ScreensaverType = "images" | "video" | "threejs";
 
-// 图片资源
-const imageFiles = [
-  "/assets/screensaver/images/1.jpg",
-  "/assets/screensaver/images/2.jpg",
-  "/assets/screensaver/images/3.jpg",
-  "/assets/screensaver/images/4.jpg",
-  "/assets/screensaver/images/5.jpg",
-];
+// 随机打乱数组（Fisher-Yates 算法）
+function shuffleArray<T>(array: T[]): T[] {
+  const newArray = [...array];
+  for (let i = newArray.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+  }
+  return newArray;
+}
+
+// 加载屏保配置
+async function loadScreensaverConfig(): Promise<string[]> {
+  try {
+    const response = await fetch("/assets/screensaver/config.json");
+    if (!response.ok) return [];
+    const config = await response.json();
+    return config.images || [];
+  } catch {
+    return [];
+  }
+}
 
 // 视频资源
 const videoFile = "/assets/screensaver/video/loop.mp4";
@@ -35,31 +48,39 @@ function ImageScreensaver({
   interval?: number;
   onExit: () => void;
 }) {
+  const [shuffledImages, setShuffledImages] = useState<string[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(true);
   const [showControls, setShowControls] = useState(true);
   const timeoutRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const controlsTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const nextImage = useCallback(() => {
-    setCurrentIndex((prev) => (prev + 1) % imageFiles.length);
+  // 加载配置并打乱
+  useEffect(() => {
+    loadScreensaverConfig().then((loadedImages) => {
+      setShuffledImages(shuffleArray(loadedImages));
+    });
   }, []);
+
+  const nextImage = useCallback(() => {
+    setCurrentIndex((prev) => (prev + 1) % shuffledImages.length);
+  }, [shuffledImages.length]);
 
   const prevImage = useCallback(() => {
     setCurrentIndex(
-      (prev) => (prev - 1 + imageFiles.length) % imageFiles.length,
+      (prev) => (prev - 1 + shuffledImages.length) % shuffledImages.length,
     );
   }, []);
 
   // 自动切换
   useEffect(() => {
-    if (isPlaying) {
+    if (isPlaying && shuffledImages.length > 0) {
       timeoutRef.current = setInterval(nextImage, interval);
     }
     return () => {
       if (timeoutRef.current) clearInterval(timeoutRef.current);
     };
-  }, [isPlaying, interval, nextImage]);
+  }, [isPlaying, interval, nextImage, shuffledImages.length]);
 
   // 隐藏控制栏
   const handleMouseMove = () => {
@@ -75,21 +96,33 @@ function ImageScreensaver({
       onClick={handleMouseMove}
     >
       {/* 图片显示 */}
-      {imageFiles.map((src, index) => (
-        <img
-          key={src}
-          src={src}
-          alt=""
-          className={cn(
-            "absolute inset-0 w-full h-full object-cover transition-opacity duration-1000",
-            index === currentIndex ? "opacity-100" : "opacity-0",
-          )}
-          onError={(e) => {
-            // 图片加载失败时隐藏
-            (e.target as HTMLImageElement).style.display = "none";
-          }}
-        />
-      ))}
+      {shuffledImages.length === 0 ? (
+        <div className="absolute inset-0 flex items-center justify-center text-white/60">
+          <div className="text-center">
+            <Images className="w-16 h-16 mx-auto mb-4 opacity-50" />
+            <p className="text-lg">暂无图片</p>
+            <p className="text-sm opacity-60 mt-2">
+              请将图片放入 public/assets/screensaver/images/
+            </p>
+          </div>
+        </div>
+      ) : (
+        shuffledImages.map((src, index) => (
+          <img
+            key={src}
+            src={src}
+            alt=""
+            className={cn(
+              "absolute inset-0 w-full h-full object-cover transition-opacity duration-1000",
+              index === currentIndex ? "opacity-100" : "opacity-0",
+            )}
+            onError={(e) => {
+              // 图片加载失败时隐藏
+              (e.target as HTMLImageElement).style.display = "none";
+            }}
+          />
+        ))
+      )}
 
       {/* 控制栏 */}
       <div
@@ -125,7 +158,7 @@ function ImageScreensaver({
           </div>
 
           <div className="text-white/60 text-sm">
-            {currentIndex + 1} / {imageFiles.length}
+            {currentIndex + 1} / {shuffledImages.length}
           </div>
 
           <button

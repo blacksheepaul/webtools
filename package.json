@@ -5,9 +5,10 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
+    "build": "npm run screensaver:config && tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "screensaver:config": "node scripts/generate-screensaver-config.js"
   },
   "dependencies": {
     "@types/three": "^0.183.1",

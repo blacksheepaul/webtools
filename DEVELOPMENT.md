@@ -121,5 +121,16 @@ const categories: ToolCategory[] = [
 
 屏保工具需要以下资源文件：
 
-- **图片轮播**：将图片放入 `public/assets/screensaver/images/` 目录，命名为 `1.jpg`, `2.jpg`... 即可自动轮播
+- **图片轮播**：将图片放入 `public/assets/screensaver/images/` 目录，运行 `npm run screensaver:config` 自动生成配置即可轮播（图片会随机打乱顺序展示）
 - **视频循环**：将视频文件放入 `public/assets/screensaver/video/loop.mp4` 即可播放
+
+**添加新图片流程**：
+```bash
+# 1. 将图片放入目录
+cp your-image.jpg public/assets/screensaver/images/
+
+# 2. 重新生成配置（dev/build 会自动执行）
+npm run screensaver:config
+```
+
+支持的格式：jpg, jpeg, png, gif, webp, avif
