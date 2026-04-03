@@ -2,6 +2,7 @@ import { urlCodecTool } from "./urlcodec";
 import { base64Tool } from "./base64";
 import { uuidTool } from "./uuid";
 import { jwtTool } from "./jwt";
+import { dateCalcTool } from "./datecalc";
 import { registerTools, registerCategories } from "../utils/toolRegistry";
 import type { ToolCategory } from "../types/tool";
 import { Code, Hash, Shield, Image, FileText, Wrench } from "lucide-react";
@@ -22,6 +23,7 @@ const tools = [
   base64Tool,
   uuidTool,
   jwtTool,
+  dateCalcTool,
   // 未来在这里添加更多工具...
 ];
 
@@ -34,3 +36,4 @@ export * from "./urlcodec";
 export * from "./base64";
 export * from "./uuid";
 export * from "./jwt";
+export * from "./datecalc";
