@@ -1,33 +1,33 @@
-import { useState, useCallback } from 'react';
-import { cn } from '../../utils/cn';
-import { ArrowDown, Copy, Check, RotateCcw, FileJson } from 'lucide-react';
+import { useState, useCallback } from "react";
+import { cn } from "../../utils/cn";
+import { ArrowDown, Copy, Check, RotateCcw, FileJson } from "lucide-react";
 
-type CodecMode = 'encode' | 'decode';
+type CodecMode = "encode" | "decode";
 
 export default function UrlCodecTool() {
-  const [input, setInput] = useState('');
-  const [output, setOutput] = useState('');
-  const [mode, setMode] = useState<CodecMode>('encode');
+  const [input, setInput] = useState("");
+  const [output, setOutput] = useState("");
+  const [mode, setMode] = useState<CodecMode>("encode");
   const [copied, setCopied] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
 
   const processText = useCallback((text: string, currentMode: CodecMode) => {
     if (!text.trim()) {
-      setOutput('');
-      setError('');
+      setOutput("");
+      setError("");
       return;
     }
 
     try {
-      if (currentMode === 'encode') {
+      if (currentMode === "encode") {
         setOutput(encodeURIComponent(text));
       } else {
         setOutput(decodeURIComponent(text));
       }
-      setError('');
-    } catch (e) {
-      setError(currentMode === 'decode' ? '无效的URL编码字符串' : '编码失败');
-      setOutput('');
+      setError("");
+    } catch {
+      setError(currentMode === "decode" ? "无效的URL编码字符串" : "编码失败");
+      setOutput("");
     }
   }, []);
 
@@ -60,9 +60,9 @@ export default function UrlCodecTool() {
   };
 
   const handleClear = () => {
-    setInput('');
-    setOutput('');
-    setError('');
+    setInput("");
+    setOutput("");
+    setError("");
   };
 
   // 解析URL参数
@@ -75,7 +75,7 @@ export default function UrlCodecTool() {
         params[key] = value;
       });
       setOutput(JSON.stringify(params, null, 2));
-      setError('');
+      setError("");
     } catch {
       // 尝试作为查询字符串解析
       try {
@@ -86,12 +86,12 @@ export default function UrlCodecTool() {
         });
         if (Object.keys(result).length > 0) {
           setOutput(JSON.stringify(result, null, 2));
-          setError('');
+          setError("");
         } else {
-          setError('无法解析URL参数');
+          setError("无法解析URL参数");
         }
       } catch {
-        setError('无法解析URL参数');
+        setError("无法解析URL参数");
       }
     }
   };
@@ -107,23 +107,23 @@ export default function UrlCodecTool() {
       {/* 模式切换 */}
       <div className="flex gap-2 p-1 bg-gray-100 rounded-lg inline-flex">
         <button
-          onClick={() => handleModeChange('encode')}
+          onClick={() => handleModeChange("encode")}
           className={cn(
-            'px-4 py-2 rounded-md text-sm font-medium transition-all',
-            mode === 'encode'
-              ? 'bg-white text-blue-600 shadow-sm'
-              : 'text-gray-600 hover:text-gray-900'
+            "px-4 py-2 rounded-md text-sm font-medium transition-all",
+            mode === "encode"
+              ? "bg-white text-blue-600 shadow-sm"
+              : "text-gray-600 hover:text-gray-900",
           )}
         >
           编码 (Encode)
         </button>
         <button
-          onClick={() => handleModeChange('decode')}
+          onClick={() => handleModeChange("decode")}
           className={cn(
-            'px-4 py-2 rounded-md text-sm font-medium transition-all',
-            mode === 'decode'
-              ? 'bg-white text-blue-600 shadow-sm'
-              : 'text-gray-600 hover:text-gray-900'
+            "px-4 py-2 rounded-md text-sm font-medium transition-all",
+            mode === "decode"
+              ? "bg-white text-blue-600 shadow-sm"
+              : "text-gray-600 hover:text-gray-900",
           )}
         >
           解码 (Decode)
@@ -134,7 +134,7 @@ export default function UrlCodecTool() {
       <div className="space-y-2">
         <div className="flex items-center justify-between">
           <label className="text-sm font-medium text-gray-700">
-            {mode === 'encode' ? '输入文本' : '输入URL编码'}
+            {mode === "encode" ? "输入文本" : "输入URL编码"}
           </label>
           <div className="flex gap-2">
             <button
@@ -157,7 +157,11 @@ export default function UrlCodecTool() {
         <textarea
           value={input}
           onChange={(e) => handleInputChange(e.target.value)}
-          placeholder={mode === 'encode' ? '输入要编码的文本...' : '输入要解码的URL编码字符串...'}
+          placeholder={
+            mode === "encode"
+              ? "输入要编码的文本..."
+              : "输入要解码的URL编码字符串..."
+          }
           className="w-full h-40 p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-y font-mono text-sm"
         />
         <div className="text-xs text-gray-400 text-right">
@@ -176,16 +180,16 @@ export default function UrlCodecTool() {
       <div className="space-y-2">
         <div className="flex items-center justify-between">
           <label className="text-sm font-medium text-gray-700">
-            {mode === 'encode' ? '编码结果' : '解码结果'}
+            {mode === "encode" ? "编码结果" : "解码结果"}
           </label>
           <button
             onClick={handleCopy}
             disabled={!output}
             className={cn(
-              'flex items-center gap-1 px-3 py-1.5 text-sm rounded transition-all',
+              "flex items-center gap-1 px-3 py-1.5 text-sm rounded transition-all",
               output
-                ? 'text-blue-600 hover:bg-blue-50'
-                : 'text-gray-300 cursor-not-allowed'
+                ? "text-blue-600 hover:bg-blue-50"
+                : "text-gray-300 cursor-not-allowed",
             )}
           >
             {copied ? (
@@ -207,8 +211,8 @@ export default function UrlCodecTool() {
             readOnly
             placeholder="结果将显示在这里..."
             className={cn(
-              'w-full h-40 p-4 border rounded-lg resize-y font-mono text-sm bg-gray-50',
-              error ? 'border-red-300 bg-red-50' : 'border-gray-300'
+              "w-full h-40 p-4 border rounded-lg resize-y font-mono text-sm bg-gray-50",
+              error ? "border-red-300 bg-red-50" : "border-gray-300",
             )}
           />
           {error && (

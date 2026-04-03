@@ -1,54 +1,69 @@
-import { useState, useCallback } from 'react';
-import { cn } from '../../utils/cn';
-import { ArrowDown, Copy, Check, RotateCcw, Upload, FileText } from 'lucide-react';
+import { useState, useCallback } from "react";
+import { cn } from "../../utils/cn";
+import {
+  ArrowDown,
+  Copy,
+  Check,
+  RotateCcw,
+  Upload,
+  FileText,
+} from "lucide-react";
 
-type CodecMode = 'encode' | 'decode';
+type CodecMode = "encode" | "decode";
 
 export default function Base64Tool() {
-  const [input, setInput] = useState('');
-  const [output, setOutput] = useState('');
-  const [mode, setMode] = useState<CodecMode>('encode');
+  const [input, setInput] = useState("");
+  const [output, setOutput] = useState("");
+  const [mode, setMode] = useState<CodecMode>("encode");
   const [copied, setCopied] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const [urlSafe, setUrlSafe] = useState(false);
 
-  const processText = useCallback((text: string, currentMode: CodecMode, isUrlSafe: boolean) => {
-    if (!text) {
-      setOutput('');
-      setError('');
-      return;
-    }
-
-    try {
-      if (currentMode === 'encode') {
-        // 文本转 Base64
-        let encoded = btoa(unescape(encodeURIComponent(text)));
-        if (isUrlSafe) {
-          // URL Safe Base64: 替换 + 为 -，/ 为 _，去掉 =
-          encoded = encoded.replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
-        }
-        setOutput(encoded);
-      } else {
-        // Base64 转文本
-        let decodedText = text;
-        if (isUrlSafe) {
-          // URL Safe Base64 还原
-          decodedText = decodedText.replace(/-/g, '+').replace(/_/g, '/');
-          // 补齐 =
-          const padding = decodedText.length % 4;
-          if (padding) {
-            decodedText += '='.repeat(4 - padding);
-          }
-        }
-        const decoded = decodeURIComponent(escape(atob(decodedText)));
-        setOutput(decoded);
+  const processText = useCallback(
+    (text: string, currentMode: CodecMode, isUrlSafe: boolean) => {
+      if (!text) {
+        setOutput("");
+        setError("");
+        return;
       }
-      setError('');
-    } catch (e) {
-      setError(currentMode === 'decode' ? '无效的 Base64 字符串' : '编码失败');
-      setOutput('');
-    }
-  }, []);
+
+      try {
+        if (currentMode === "encode") {
+          // 文本转 Base64
+          let encoded = btoa(unescape(encodeURIComponent(text)));
+          if (isUrlSafe) {
+            // URL Safe Base64: 替换 + 为 -，/ 为 _，去掉 =
+            encoded = encoded
+              .replace(/\+/g, "-")
+              .replace(/\//g, "_")
+              .replace(/=/g, "");
+          }
+          setOutput(encoded);
+        } else {
+          // Base64 转文本
+          let decodedText = text;
+          if (isUrlSafe) {
+            // URL Safe Base64 还原
+            decodedText = decodedText.replace(/-/g, "+").replace(/_/g, "/");
+            // 补齐 =
+            const padding = decodedText.length % 4;
+            if (padding) {
+              decodedText += "=".repeat(4 - padding);
+            }
+          }
+          const decoded = decodeURIComponent(escape(atob(decodedText)));
+          setOutput(decoded);
+        }
+        setError("");
+      } catch {
+        setError(
+          currentMode === "decode" ? "无效的 Base64 字符串" : "编码失败",
+        );
+        setOutput("");
+      }
+    },
+    [],
+  );
 
   const handleInputChange = (value: string) => {
     setInput(value);
@@ -82,9 +97,9 @@ export default function Base64Tool() {
   };
 
   const handleClear = () => {
-    setInput('');
-    setOutput('');
-    setError('');
+    setInput("");
+    setOutput("");
+    setError("");
   };
 
   // 文件转 Base64
@@ -96,32 +111,33 @@ export default function Base64Tool() {
     reader.onload = (event) => {
       const result = event.target?.result as string;
       // Data URL 格式: data:[<mediatype>][;base64],<data>
-      const base64 = result.split(',')[1];
+      const base64 = result.split(",")[1];
       setInput(`[文件: ${file.name}]`);
-      setOutput(urlSafe
-        ? base64.replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '')
-        : base64
+      setOutput(
+        urlSafe
+          ? base64.replace(/\+/g, "-").replace(/\//g, "_").replace(/=/g, "")
+          : base64,
       );
-      setMode('encode');
-      setError('');
+      setMode("encode");
+      setError("");
     };
     reader.onerror = () => {
-      setError('文件读取失败');
+      setError("文件读取失败");
     };
     reader.readAsDataURL(file);
   };
 
   // Base64 转文件下载
   const handleDownload = () => {
-    if (!input.trim() || mode !== 'decode') return;
+    if (!input.trim() || mode !== "decode") return;
 
     try {
       let base64 = input.trim();
       if (urlSafe) {
-        base64 = base64.replace(/-/g, '+').replace(/_/g, '/');
+        base64 = base64.replace(/-/g, "+").replace(/_/g, "/");
         const padding = base64.length % 4;
         if (padding) {
-          base64 += '='.repeat(4 - padding);
+          base64 += "=".repeat(4 - padding);
         }
       }
 
@@ -136,15 +152,15 @@ export default function Base64Tool() {
       const blob = new Blob([byteArray]);
       const url = URL.createObjectURL(blob);
 
-      const a = document.createElement('a');
+      const a = document.createElement("a");
       a.href = url;
-      a.download = 'decoded-file';
+      a.download = "decoded-file";
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
     } catch {
-      setError('无法解码为文件');
+      setError("无法解码为文件");
     }
   };
 
@@ -153,30 +169,32 @@ export default function Base64Tool() {
       {/* 页面标题 */}
       <div>
         <h1 className="text-2xl font-bold text-gray-900">Base64 编码/解码</h1>
-        <p className="mt-1 text-gray-500">文本与 Base64 格式互相转换，支持文件编码</p>
+        <p className="mt-1 text-gray-500">
+          文本与 Base64 格式互相转换，支持文件编码
+        </p>
       </div>
 
       {/* 模式切换和选项 */}
       <div className="flex flex-wrap items-center gap-4">
         <div className="flex gap-2 p-1 bg-gray-100 rounded-lg">
           <button
-            onClick={() => handleModeChange('encode')}
+            onClick={() => handleModeChange("encode")}
             className={cn(
-              'px-4 py-2 rounded-md text-sm font-medium transition-all',
-              mode === 'encode'
-                ? 'bg-white text-blue-600 shadow-sm'
-                : 'text-gray-600 hover:text-gray-900'
+              "px-4 py-2 rounded-md text-sm font-medium transition-all",
+              mode === "encode"
+                ? "bg-white text-blue-600 shadow-sm"
+                : "text-gray-600 hover:text-gray-900",
             )}
           >
             编码 (Encode)
           </button>
           <button
-            onClick={() => handleModeChange('decode')}
+            onClick={() => handleModeChange("decode")}
             className={cn(
-              'px-4 py-2 rounded-md text-sm font-medium transition-all',
-              mode === 'decode'
-                ? 'bg-white text-blue-600 shadow-sm'
-                : 'text-gray-600 hover:text-gray-900'
+              "px-4 py-2 rounded-md text-sm font-medium transition-all",
+              mode === "decode"
+                ? "bg-white text-blue-600 shadow-sm"
+                : "text-gray-600 hover:text-gray-900",
             )}
           >
             解码 (Decode)
@@ -198,10 +216,10 @@ export default function Base64Tool() {
       <div className="space-y-2">
         <div className="flex items-center justify-between">
           <label className="text-sm font-medium text-gray-700">
-            {mode === 'encode' ? '输入文本' : '输入 Base64'}
+            {mode === "encode" ? "输入文本" : "输入 Base64"}
           </label>
           <div className="flex gap-2">
-            {mode === 'encode' && (
+            {mode === "encode" && (
               <label className="flex items-center gap-1 px-2 py-1 text-xs text-blue-600 hover:bg-blue-50 rounded transition-colors cursor-pointer">
                 <Upload className="w-3 h-3" />
                 上传文件
@@ -212,7 +230,7 @@ export default function Base64Tool() {
                 />
               </label>
             )}
-            {mode === 'decode' && output && (
+            {mode === "decode" && output && (
               <button
                 onClick={handleDownload}
                 className="flex items-center gap-1 px-2 py-1 text-xs text-blue-600 hover:bg-blue-50 rounded transition-colors"
@@ -233,7 +251,11 @@ export default function Base64Tool() {
         <textarea
           value={input}
           onChange={(e) => handleInputChange(e.target.value)}
-          placeholder={mode === 'encode' ? '输入要编码的文本...' : '输入要解码的 Base64 字符串...'}
+          placeholder={
+            mode === "encode"
+              ? "输入要编码的文本..."
+              : "输入要解码的 Base64 字符串..."
+          }
           className="w-full h-40 p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-y font-mono text-sm"
         />
         <div className="text-xs text-gray-400 text-right">
@@ -252,16 +274,16 @@ export default function Base64Tool() {
       <div className="space-y-2">
         <div className="flex items-center justify-between">
           <label className="text-sm font-medium text-gray-700">
-            {mode === 'encode' ? 'Base64 结果' : '解码结果'}
+            {mode === "encode" ? "Base64 结果" : "解码结果"}
           </label>
           <button
             onClick={handleCopy}
             disabled={!output}
             className={cn(
-              'flex items-center gap-1 px-3 py-1.5 text-sm rounded transition-all',
+              "flex items-center gap-1 px-3 py-1.5 text-sm rounded transition-all",
               output
-                ? 'text-blue-600 hover:bg-blue-50'
-                : 'text-gray-300 cursor-not-allowed'
+                ? "text-blue-600 hover:bg-blue-50"
+                : "text-gray-300 cursor-not-allowed",
             )}
           >
             {copied ? (
@@ -283,8 +305,8 @@ export default function Base64Tool() {
             readOnly
             placeholder="结果将显示在这里..."
             className={cn(
-              'w-full h-40 p-4 border rounded-lg resize-y font-mono text-sm bg-gray-50',
-              error ? 'border-red-300 bg-red-50' : 'border-gray-300'
+              "w-full h-40 p-4 border rounded-lg resize-y font-mono text-sm bg-gray-50",
+              error ? "border-red-300 bg-red-50" : "border-gray-300",
             )}
           />
           {error && (
