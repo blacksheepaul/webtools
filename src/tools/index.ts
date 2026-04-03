@@ -1,5 +1,6 @@
 import { urlCodecTool } from "./urlcodec";
 import { base64Tool } from "./base64";
+import { uuidTool } from "./uuid";
 import { registerTools, registerCategories } from "../utils/toolRegistry";
 import type { ToolCategory } from "../types/tool";
 import { Code, Hash, Shield, Image, FileText, Wrench } from "lucide-react";
@@ -18,6 +19,7 @@ const categories: ToolCategory[] = [
 const tools = [
   urlCodecTool,
   base64Tool,
+  uuidTool,
   // 未来在这里添加更多工具...
 ];
 
@@ -28,3 +30,4 @@ export function initTools() {
 
 export * from "./urlcodec";
 export * from "./base64";
+export * from "./uuid";
