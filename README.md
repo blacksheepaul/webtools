@@ -120,6 +120,7 @@ const categories: ToolCategory[] = [
 | 工具 | 描述 | 路径 |
 |------|------|------|
 | URL 编码/解码 | URL编码、解码及参数解析 | `/tools/url-codec` |
+| Base64 编码/解码 | Base64编码解码，支持文件和URL Safe | `/tools/base64-codec` |
 
 ## 开发规范
 
