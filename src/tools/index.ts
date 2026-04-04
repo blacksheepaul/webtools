@@ -7,6 +7,7 @@ import { diffTool } from "./diff";
 import { fileHashTool } from "./filehash";
 import { screensaverTool } from "./screensaver";
 import { unixTimeTool } from "./unixtime";
+import { textSearchTool } from "./textsearch";
 import { registerTools, registerCategories } from "../utils/toolRegistry";
 import type { ToolCategory } from "../types/tool";
 import { Code, Hash, Shield, Image, FileText, Wrench } from "lucide-react";
@@ -32,6 +33,7 @@ const tools = [
   fileHashTool,
   screensaverTool,
   unixTimeTool,
+  textSearchTool,
   // 未来在这里添加更多工具...
 ];
 
@@ -49,3 +51,4 @@ export * from "./diff";
 export * from "./filehash";
 export * from "./screensaver";
 export * from "./unixtime";
+export * from "./textsearch";
