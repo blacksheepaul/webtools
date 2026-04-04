@@ -118,7 +118,7 @@ React uses a virtual DOM to improve performance. When state changes, React first
   // 渲染高亮文本
   const renderHighlightedText = () => {
     if (!query.trim() || matches.length === 0) {
-      return <span className="whitespace-pre-wrap">{text}</span>;
+      return <span className="whitespace-pre-wrap break-words">{text}</span>;
     }
 
     const parts: React.ReactElement[] = [];
@@ -282,7 +282,7 @@ React uses a virtual DOM to improve performance. When state changes, React first
           <div
             ref={textContainerRef}
             className={cn(
-              "w-full min-h-[200px] max-h-96 p-4 border rounded-lg overflow-auto font-mono text-sm leading-relaxed",
+              "w-full min-h-[200px] max-h-96 p-4 border rounded-lg overflow-y-auto font-mono text-sm leading-relaxed break-words",
               matches.length > 0
                 ? "border-blue-200 bg-blue-50/30"
                 : "border-gray-200 bg-gray-50",
